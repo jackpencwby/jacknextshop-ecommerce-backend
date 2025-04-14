@@ -17,8 +17,6 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.repository.UserRepository
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.CloudinaryService;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.UserService;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -34,61 +32,45 @@ public class UserController {
 
     @GetMapping("")
     public ResponseEntity<APIResponseDTO<User>> getUserInfo(OAuth2AuthenticationToken token) {
-        Optional<User> userOptional = userService.getUserByToken(token);
-        if(userOptional.isPresent()){
-            APIResponseDTO<User> res = new APIResponseDTO<>();
-            res.setMessage("Success");
-            res.setData(userOptional.get());
-            return ResponseEntity.status(HttpStatus.OK).body(res);
-        }
+        User user = userService.getUserByToken(token);
         APIResponseDTO<User> res = new APIResponseDTO<>();
-        res.setMessage("Not found");
-        res.setData(null);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+        res.setMessage("Success");
+        res.setData(user);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     @PutMapping("")
     public ResponseEntity<APIResponseDTO<User>> updateUserInfo(OAuth2AuthenticationToken token, @ModelAttribute UserRequestBodyDTO userRequest){
-        Optional<User> userOptional = userService.getUserByToken(token);
-        if(userOptional.isPresent()){
-            User user = userOptional.get();
-            if(userRequest.getFname() != null){
-                user.setFname(userRequest.getFname());             
-            }
-            if(userRequest.getLname() != null){
-                user.setLname(userRequest.getLname());
-            }
-            if(userRequest.getEmail() != null){
-                user.setEmail(userRequest.getEmail());
-            }
-            if(userRequest.getBirthdate() != null){
-                user.setBirthdate(userRequest.getBirthdate());
-            }
-            
-            try{
-                if(userRequest.getImage() != null){
-                    String imageUrl = cloudinaryService.uploadImage(userRequest.getImage());
-                    user.setImage(imageUrl);
-                }
-            }catch(Exception e){
-                APIResponseDTO<User> res = new APIResponseDTO<>();
-                res.setMessage("Bad request");
-                res.setData(null);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
-            }
-
-            userRepository.save(user);
-            APIResponseDTO<User> res = new APIResponseDTO<>();
-            res.setMessage("User Update Success");
-            res.setData(user);
-            return ResponseEntity.status(HttpStatus.OK).body(res);
+        User user = userService.getUserByToken(token);
+        if(userRequest.getFname() != null){
+            user.setFname(userRequest.getFname());             
         }
+        if(userRequest.getLname() != null){
+            user.setLname(userRequest.getLname());
+        }
+        if(userRequest.getEmail() != null){
+            user.setEmail(userRequest.getEmail());
+        }
+        if(userRequest.getBirthdate() != null){
+            user.setBirthdate(userRequest.getBirthdate());
+        }
+            
+        try{
+            if(userRequest.getImage() != null){
+                String imageUrl = cloudinaryService.uploadImage(userRequest.getImage());
+                user.setImage(imageUrl);
+            }
+        }catch(Exception e){
+            APIResponseDTO<User> res = new APIResponseDTO<>();
+            res.setMessage("Bad request");
+            res.setData(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }  
 
+        userRepository.save(user);
         APIResponseDTO<User> res = new APIResponseDTO<>();
-        res.setMessage("Not found");
-        res.setData(null);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
-    }
-
-    
+        res.setMessage("User Update Success");
+        res.setData(user);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+        }
 }

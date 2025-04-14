@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+    <div class="bg-white p-8 rounded shadow-md text-center w-full max-w-sm">
+        <h2 class="text-2xl font-semibold mb-6">Login with</h2>
+        <div class="flex flex-col gap-4">
+            <a href="/oauth2/authorization/google"
+                class="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-2 rounded">
+                <i class="fab fa-google"></i> Google
+            </a>
+            <a href="/oauth2/authorization/facebook"
+                class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+                <i class="fab fa-facebook-f"></i> Facebook
+            </a>
+            <a href="/oauth2/authorization/github"
+                class="flex items-center justify-center gap-2 bg-gray-800 hover:bg-black text-white py-2 rounded">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>

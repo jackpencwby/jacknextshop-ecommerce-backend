@@ -7,15 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Embeddable
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class CartKey implements Serializable {
+@Embeddable
+public class CategoryProductKey implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "category_id")
+    private Long categoryId;
 
     @Column(name = "product_id")
     private Long productId;

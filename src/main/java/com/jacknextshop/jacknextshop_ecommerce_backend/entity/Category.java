@@ -29,4 +29,7 @@ public class Category {
     // Fields
     @Column(name = "name")
     private String name;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 }

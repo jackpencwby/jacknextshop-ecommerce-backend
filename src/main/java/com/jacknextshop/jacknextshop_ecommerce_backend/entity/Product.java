@@ -3,13 +3,11 @@ package com.jacknextshop.jacknextshop_ecommerce_backend.entity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,8 +24,8 @@ public class Product {
     private Long productId;
 
     // Relationship
-    @ManyToMany(mappedBy = "products")
-    private Set<Category> categories;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<CategoryProduct> categoryProducts = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderProduct> orderProducts = new ArrayList<>();

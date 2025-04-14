@@ -5,15 +5,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
-import com.jacknextshop.jacknextshop_ecommerce_backend.dto.UserRequestBodyDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.user.UserRequestBodyDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.UserRepository;
+import com.jacknextshop.jacknextshop_ecommerce_backend.service.CloudinaryService;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.UserService;
 
 import java.util.Optional;
@@ -28,7 +29,10 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/")
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
+    @GetMapping("")
     public ResponseEntity<APIResponseDTO<User>> getUserInfo(OAuth2AuthenticationToken token) {
         Optional<User> userOptional = userService.getUserByToken(token);
         if(userOptional.isPresent()){
@@ -43,8 +47,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
 
-    @PutMapping("/")
-    public ResponseEntity<APIResponseDTO<User>> updateUserInfo(OAuth2AuthenticationToken token, @RequestBody UserRequestBodyDTO userRequest){
+    @PutMapping("")
+    public ResponseEntity<APIResponseDTO<User>> updateUserInfo(OAuth2AuthenticationToken token, @ModelAttribute UserRequestBodyDTO userRequest){
         Optional<User> userOptional = userService.getUserByToken(token);
         if(userOptional.isPresent()){
             User user = userOptional.get();
@@ -60,6 +64,19 @@ public class UserController {
             if(userRequest.getBirthdate() != null){
                 user.setBirthdate(userRequest.getBirthdate());
             }
+            
+            try{
+                if(userRequest.getImage() != null){
+                    String imageUrl = cloudinaryService.uploadImage(userRequest.getImage());
+                    user.setImage(imageUrl);
+                }
+            }catch(Exception e){
+                APIResponseDTO<User> res = new APIResponseDTO<>();
+                res.setMessage("Bad request");
+                res.setData(null);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+            }
+
             userRepository.save(user);
             APIResponseDTO<User> res = new APIResponseDTO<>();
             res.setMessage("User Update Success");

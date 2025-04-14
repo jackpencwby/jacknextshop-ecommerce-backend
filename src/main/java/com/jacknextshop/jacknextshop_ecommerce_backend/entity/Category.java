@@ -1,15 +1,14 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.entity;
 
-import java.util.Set;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -23,13 +22,8 @@ public class Category {
     private Long categoryId;
 
     // Relationship
-    @ManyToMany
-    @JoinTable(
-        name = "category_products",
-        joinColumns = @JoinColumn(name = "category_id"),
-        inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private Set<Product> products;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<CategoryProduct> categoryProducts;
 
 
     // Fields

@@ -11,11 +11,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "users")
+@Table(
+    name = "users",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"provider", "providerId"})
+)
 public class User {
 
     @Id
@@ -56,5 +60,5 @@ public class User {
     private String image;
 
     @Column(name= "is_admin")
-    private Boolean isAdmin;
+    private Boolean isAdmin = false;
 }

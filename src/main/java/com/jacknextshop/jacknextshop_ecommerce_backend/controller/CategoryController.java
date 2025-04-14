@@ -35,8 +35,6 @@ public class CategoryController {
     @PostMapping()
     public ResponseEntity<?> createCategory(@Valid @RequestBody CreateCategoryDTO createCategoryDTO) {
         try {
-            System.out.println(createCategoryDTO.getName());
-
             Category category = new Category();
             category.setName(createCategoryDTO.getName());
 

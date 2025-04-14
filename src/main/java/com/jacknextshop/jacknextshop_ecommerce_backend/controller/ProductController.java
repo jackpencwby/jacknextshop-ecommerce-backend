@@ -10,9 +10,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.CreateProductDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Category;
+import com.jacknextshop.jacknextshop_ecommerce_backend.entity.CategoryProduct;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
+import com.jacknextshop.jacknextshop_ecommerce_backend.entity.key.CategoryProductKey;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.CategoryProductRepository;
+import com.jacknextshop.jacknextshop_ecommerce_backend.repository.CategoryRepository;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.ProductRepository;
+import com.jacknextshop.jacknextshop_ecommerce_backend.service.CloudinaryService;
 
 import jakarta.validation.Valid;
 
@@ -20,7 +25,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -32,15 +36,45 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private CategoryProductRepository categoryProductRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @PostMapping()
     public ResponseEntity<?> createProduct(@Valid @ModelAttribute CreateProductDTO createProductDTO) {
         try {
             Product product = new Product();
-            product.setName(CreateProductDTO.getName());
-        } catch (Exception e) {
+            product.setName(createProductDTO.getName());
+            product.setPrice(createProductDTO.getPrice());
+            product.setDescription(createProductDTO.getDescription());
+            product.setStock(createProductDTO.getStock());
 
+            String imageUrl = cloudinaryService.uploadImage(createProductDTO.getImage());
+            product.setImage(imageUrl);
+
+            Product savedProduct = productRepository.save(product);
+
+            for (Long categoryId : createProductDTO.getCategoriesId()) {
+                Category category = categoryRepository.findById(categoryId).orElse(null);
+
+                CategoryProductKey categoryProductKey = new CategoryProductKey(categoryId, savedProduct.getProductId());
+
+                CategoryProduct categoryProduct = new CategoryProduct();
+                categoryProduct.setCategoryProductKey(categoryProductKey);
+                categoryProduct.setCategory(category);
+                categoryProduct.setProduct(savedProduct);
+
+                categoryProductRepository.save(categoryProduct);
+            }
+
+            return ResponseEntity.ok(product);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 

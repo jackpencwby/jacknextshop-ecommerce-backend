@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.user.UserRequestBodyDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.user.UserResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.UserRepository;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.CloudinaryService;
@@ -30,17 +31,17 @@ public class UserController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @GetMapping("")
-    public ResponseEntity<APIResponseDTO<User>> getUserInfo(OAuth2AuthenticationToken token) {
+    @GetMapping()
+    public ResponseEntity<APIResponseDTO<?>> getUserInfo(OAuth2AuthenticationToken token) {
         User user = userService.getUserByToken(token);
-        APIResponseDTO<User> res = new APIResponseDTO<>();
+        APIResponseDTO<UserResponseDTO> res = new APIResponseDTO<>();
         res.setMessage("Success");
-        res.setData(user);
+        res.setData(userService.toDto(user));
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
-    @PutMapping("")
-    public ResponseEntity<APIResponseDTO<User>> updateUserInfo(OAuth2AuthenticationToken token, @ModelAttribute UserRequestBodyDTO userRequest){
+    @PutMapping()
+    public ResponseEntity<APIResponseDTO<?>> updateUserInfo(OAuth2AuthenticationToken token, @ModelAttribute UserRequestBodyDTO userRequest){
         User user = userService.getUserByToken(token);
         if(userRequest.getFname() != null){
             user.setFname(userRequest.getFname());             
@@ -61,16 +62,16 @@ public class UserController {
                 user.setImage(imageUrl);
             }
         }catch(Exception e){
-            APIResponseDTO<User> res = new APIResponseDTO<>();
+            APIResponseDTO<?> res = new APIResponseDTO<>();
             res.setMessage("Bad request");
             res.setData(null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }  
 
         userRepository.save(user);
-        APIResponseDTO<User> res = new APIResponseDTO<>();
+        APIResponseDTO<UserResponseDTO> res = new APIResponseDTO<>();
         res.setMessage("User Update Success");
-        res.setData(user);
+        res.setData(userService.toDto(user));
         return ResponseEntity.status(HttpStatus.OK).body(res);
         }
 }

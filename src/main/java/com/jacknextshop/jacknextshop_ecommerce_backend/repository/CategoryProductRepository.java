@@ -6,4 +6,5 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.entity.CategoryProduct;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.key.CategoryProductKey;
 
 public interface CategoryProductRepository extends JpaRepository<CategoryProduct, CategoryProductKey>{
+    
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.user.UserResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserIsNotAdminException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserNotFoundException;
@@ -42,5 +43,15 @@ public class UserService {
         if(! user.getIsAdmin()){
             throw new UserIsNotAdminException("You do not have administrative privileges to perform this action.");
         }
+    }
+
+    public UserResponseDTO toDto(User user){
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setFname(user.getFname());
+        dto.setLname(user.getLname());
+        dto.setEmail(user.getEmail());
+        dto.setBirthDate(user.getBirthdate());
+        dto.setImage(user.getImage());
+        return dto;
     }
 }

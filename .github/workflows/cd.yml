@@ -36,9 +36,12 @@ jobs:
     
     - name: Stop the Running Java Process
       run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command "Stop-Process -Name 'java' -Force -ErrorAction SilentlyContinue;"
-
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command "
+          Stop-Process -Name 'java' -Force -ErrorAction SilentlyContinue;
+        "
+    
     - name: Start the Java Process with Application Properties
       run: |
         ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command "
-          java -Dspring.config.location=file:/C:/deploy-backend/application.properties -jar C:/deploy-backend/jacknextshop-ecommerce-backend.jar"
+          java -Dspring.config.location=file:/C:/deploy-backend/application.properties -jar C:/deploy-backend/jacknextshop-ecommerce-backend.jar
+        "

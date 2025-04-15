@@ -34,9 +34,9 @@ jobs:
       run: |
         scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no target/jacknextshop-ecommerce-backend.jar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:"C:/deploy-backend/"
     
-    - name: Restart app on Windows Server
+    - name: Restart Spring Boot App on Windows Server
       run: |
         ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command "
           Stop-Process -Name 'java' -Force -ErrorAction SilentlyContinue;
-          Start-Process 'java' -ArgumentList ' -Dspring.config.additional-location=file:C:/deploy-backend/.env -jar C:/deploy-backend/jacknextshop-ecommerce-backend.jar' -WindowStyle Hidden;
+          Start-Process -FilePath 'java' -ArgumentList '-Dspring.config.location=file:/C:/deploy-backend/application.properties','-jar','C:/deploy-backend/jacknextshop-ecommerce-backend.jar' -WindowStyle Hidden;
         "

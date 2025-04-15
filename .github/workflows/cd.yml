@@ -38,5 +38,5 @@ jobs:
       run: |
         ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "
           powershell -Command 'Stop-Process -Name \"java\" -Force -ErrorAction SilentlyContinue; 
-          Start-Process \"java\" -ArgumentList \"-Dspring.config.location=file:/C:/deploy-backend/application.properties\", \"-jar\", \"C:/deploy-backend/jacknextshop-ecommerce-backend.jar\" -WindowStyle Hidden'
+          java -Dspring.config.location=file:/C:/deploy-backend/application.properties -jar C:/deploy-backend/jacknextshop-ecommerce-backend.jar'
         "

@@ -18,14 +18,13 @@ jobs:
     runs-on: self-hosted
 
     env:
-      SPRING_PROFILES_ACTIVE: prod
       SERVER_PORT: ${{ secrets.SERVER_PORT }}
       DB_URL: ${{ secrets.DB_URL }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
-      CLOUD_API_KEY: ${{ secrets.CLOUD_API_KEY }}
-      CLOUD_API_SECRET: ${{ secrets.CLOUD_API_SECRET }}
+      CLOUDINARY_NAME: ${{ secrets.CLOUDINARY_NAME }}
+      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}

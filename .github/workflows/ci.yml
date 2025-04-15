@@ -18,14 +18,13 @@ jobs:
     runs-on: self-hosted
 
     env:
-      SPRING_PROFILES_ACTIVE: prod
       SERVER_PORT: ${{ secrets.SERVER_PORT }}
       DB_URL: ${{ secrets.DB_URL }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
-      CLOUD_API_KEY: ${{ secrets.CLOUD_API_KEY }}
-      CLOUD_API_SECRET: ${{ secrets.CLOUD_API_SECRET }}
+      CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
@@ -35,12 +34,8 @@ jobs:
       FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
 
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v4
-        
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml

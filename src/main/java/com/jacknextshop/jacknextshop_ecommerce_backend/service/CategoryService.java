@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.category.CategoryResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Category;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.CategoryRepository;
@@ -22,5 +23,11 @@ public class CategoryService {
     public List<Category> findAllById(List<Long> Ids){
         List<Category> result = categoryRepository.findAllById(Ids);
         return result;
+    }
+
+    public CategoryResponseDTO toDto(Category category){
+        CategoryResponseDTO dto = new CategoryResponseDTO();
+        dto.setName(category.getName());
+        return dto;
     }
 }

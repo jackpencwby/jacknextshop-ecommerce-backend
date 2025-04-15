@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.category.CreateCategoryDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Category;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.CategoryRepository;
+import com.jacknextshop.jacknextshop_ecommerce_backend.service.CategoryService;
 
 import jakarta.validation.Valid;
 
@@ -22,6 +23,9 @@ public class CategoryController {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private CategoryService categoryService;
+
     @PostMapping()
     public ResponseEntity<?> createCategory(@Valid @RequestBody CreateCategoryDTO createCategoryDTO) {
         try {
@@ -30,7 +34,7 @@ public class CategoryController {
 
             categoryRepository.save(category);
 
-            return ResponseEntity.ok(category);
+            return ResponseEntity.ok(categoryService.toDto(category));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());

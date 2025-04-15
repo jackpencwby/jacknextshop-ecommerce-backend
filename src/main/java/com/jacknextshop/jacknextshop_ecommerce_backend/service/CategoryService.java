@@ -1,5 +1,6 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,16 @@ public class CategoryService {
     public CategoryResponseDTO toDto(Category category){
         CategoryResponseDTO dto = new CategoryResponseDTO();
         dto.setName(category.getName());
+        dto.setCategoryId(category.getCategoryId());
+        dto.setDelete(category.isDeleted());
         return dto;
+    }
+
+    public List<CategoryResponseDTO> toDtos(List<Category> categories){
+        List<CategoryResponseDTO> dtos = new ArrayList<>();
+        for( Category c : categories){
+            dtos.add(this.toDto(c));
+        }
+        return dtos;
     }
 }

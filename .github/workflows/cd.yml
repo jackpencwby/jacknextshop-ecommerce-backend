@@ -35,5 +35,5 @@ jobs:
         scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no target/jacknextshop-ecommerce-backend.jar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:"C:/deploy-backend/"
 
     - name: Restart app on Windows Server
-      run: 
+      run: |
         ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command  "java '-Dspring.config.location=file:/C:/deploy-backend/application.properties' -jar 'C:/deploy-backend/jacknextshop-ecommerce-backend.jar'"

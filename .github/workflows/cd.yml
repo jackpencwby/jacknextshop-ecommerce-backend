@@ -14,7 +14,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout source
@@ -29,14 +29,11 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-        
+    
     - name: Copy JAR to Windows Server
       run: |
         scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no target/jacknextshop-ecommerce-backend.jar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:"C:/deploy-backend/"
     
     - name: Restart app on Windows Server
       run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "
-          powershell -Command 'Stop-Process -Name \"java\" -Force -ErrorAction SilentlyContinue; 
-          java -Dspring.config.location=file:/C:/deploy-backend/application.properties -jar C:/deploy-backend/jacknextshop-ecommerce-backend.jar'
-        "
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command "java '-Dspring.config.location=file:/C:/deploy-backend/application.properties' -jar 'C:/deploy-backend/jacknextshop-ecommerce-backend.jar'"

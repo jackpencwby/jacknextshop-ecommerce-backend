@@ -29,10 +29,6 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-    - name: Stop the Running Java Process
-      run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command "Stop-Process -Name 'java' -Force -ErrorAction SilentlyContinue;"
-
     - name: Copy JAR to Windows Server
       run: |
         scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no target/jacknextshop-ecommerce-backend.jar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:"C:/deploy-backend/

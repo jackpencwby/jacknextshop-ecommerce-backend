@@ -1,11 +1,3 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: deploy spring boot to server
 
 on:
@@ -36,11 +28,11 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-    
+
+    - name: Stop the Running Java Process
+      run: |
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command "Stop-Process -Name 'java' -Force -ErrorAction SilentlyContinue;"
+
     - name: Copy JAR to Windows Server
       run: |
-        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no target/jacknextshop-ecommerce-backend.jar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:"C:/deploy-backend/"
-    
-    - name: Restart app on Windows Server
-      run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} powershell -Command "java '-Dspring.config.location=file:/C:/deploy-backend/application.properties' -jar 'C:/deploy-backend/jacknextshop-ecommerce-backend.jar'"
+        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no target/jacknextshop-ecommerce-backend.jar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:"C:/deploy-backend/

@@ -35,7 +35,11 @@ public class SecurityConfig {
                         .csrf(csrf -> csrf.disable())
                         .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/login", "/hello").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/product").permitAll()
+                                .requestMatchers
+                                (HttpMethod.GET, 
+                                "/api/product",
+                                "/api/category"
+                                ).permitAll()
                                 .anyRequest().authenticated())
                         .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(restAuthenticationEntryPoint)

@@ -40,5 +40,5 @@ public class Review {
     private Boolean isLike;
 
     @Column(name = "is_delete")
-    private Boolean isDelete;
+    private Boolean isDelete = false;
 }

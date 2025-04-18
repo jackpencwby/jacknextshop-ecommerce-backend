@@ -120,6 +120,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		
+		<finalName>jacknextshop-ecommerce-backend</finalName>
 	</build>
-
 </project>

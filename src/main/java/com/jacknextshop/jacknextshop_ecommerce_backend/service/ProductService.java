@@ -34,7 +34,7 @@ public class ProductService {
         List<ProductResponseDTO> dtoList = new ArrayList<>();
 
         for (Product product : products) {
-            ProductResponseDTO dto = toDto(product);
+            ProductResponseDTO dto = this.toDto(product);
             dtoList.add(dto);
         }
 

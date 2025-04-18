@@ -38,7 +38,8 @@ public class SecurityConfig {
                                 .requestMatchers
                                 (HttpMethod.GET, 
                                 "/api/product",
-                                "/api/category"
+                                "/api/category",
+                                "api/review/{productId}"
                                 ).permitAll()
                                 .anyRequest().authenticated())
                         .exceptionHandling(exception -> exception

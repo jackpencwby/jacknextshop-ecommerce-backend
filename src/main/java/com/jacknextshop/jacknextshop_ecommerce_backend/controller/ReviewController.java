@@ -1,8 +1,11 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,8 +55,7 @@ public class ReviewController {
             throw new ResourceNotFoundException("This Product is already deleted");
         }
         Review review = new Review();
-        review.setReviewId(new ReviewKey(productId, productId));
-        System.out.println("\n\n\n"+ reviewRequestDTO +"\n\n\n");
+        review.setReviewId(new ReviewKey(user.getUserId(), productId));
         review.setComment(reviewRequestDTO.getComment());
         review.setIsLike(reviewRequestDTO.isLike());
         review.setRating(reviewRequestDTO.getRating());
@@ -66,6 +68,22 @@ public class ReviewController {
         APIResponseDTO<ReviewResponseDTO> responseDTO = new APIResponseDTO<>();
         responseDTO.setMessage("Success");
         responseDTO.setData(dto);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<APIResponseDTO<?>> getReview(
+        @PathVariable Long productId
+    ){
+        Product product = productService.findById(productId);
+        if(product.getIsDeleted()){
+            throw new ResourceNotFoundException("This Product is already deleted");
+        }
+        List<Review> reviews = reviewService.findAllByProductProductId(productId);
+        List<ReviewResponseDTO> result = reviewService.toDtos(reviews);
+        APIResponseDTO<List<ReviewResponseDTO>> responseDTO = new APIResponseDTO<>();
+        responseDTO.setMessage("Success");
+        responseDTO.setData(result);
         return ResponseEntity.ok().body(responseDTO);
     }
 }

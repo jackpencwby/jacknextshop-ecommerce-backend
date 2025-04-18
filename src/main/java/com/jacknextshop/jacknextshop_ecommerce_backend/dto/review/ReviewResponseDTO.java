@@ -8,5 +8,6 @@ public class ReviewResponseDTO {
     private int rating;
     private boolean isLike;
     private Long userId;
+    private String userFname;
     private Long productId;
 }

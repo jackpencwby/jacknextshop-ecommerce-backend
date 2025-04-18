@@ -50,5 +50,5 @@ public class Product {
     private int stock;
     
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }

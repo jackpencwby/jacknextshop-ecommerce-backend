@@ -1,9 +1,11 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
@@ -18,6 +20,7 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.repository.ProductReposit
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.CategoryService;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.CloudinaryService;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
+import com.jacknextshop.jacknextshop_ecommerce_backend.service.UserService;
 
 import jakarta.validation.Valid;
 
@@ -45,20 +48,30 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping()
     public ResponseEntity<APIResponseDTO<?>> getProduct(){
         List<Product> products = productRepository.findAll();
         List<ProductResponseDTO> productDTOs = productService.toDtos(products);
+        // Filter Deleted products
+        List<ProductResponseDTO> filtered = productDTOs.stream()
+            .filter(dto -> ! dto.getIsDeleted())
+            .collect(Collectors.toList());
 
         APIResponseDTO<List<ProductResponseDTO>> response = new APIResponseDTO<>();
         response.setMessage("Success");
-        response.setData(productDTOs);
-    
+        response.setData(filtered);
         return ResponseEntity.ok().body(response);
     }
 
     @PostMapping()
-    public ResponseEntity<APIResponseDTO<?>> createProduct(@Valid @ModelAttribute CreateProductDTO createProductDTO) {
+    public ResponseEntity<APIResponseDTO<?>> createProduct(
+        OAuth2AuthenticationToken token, 
+        @Valid @ModelAttribute CreateProductDTO createProductDTO
+        ) {
+        userService.checkAdmin(token);
         Product product = new Product();
         product.setName(createProductDTO.getName());
         product.setPrice(createProductDTO.getPrice());

@@ -2,7 +2,6 @@ package com.jacknextshop.jacknextshop_ecommerce_backend.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,13 +26,6 @@ public class ProductService {
         dto.setImage(product.getImage());
         dto.setStock(product.getStock());
         dto.setIsDeleted(product.getIsDeleted());
-
-        List<Long> categoryIds = product.getCategoryProducts()
-            .stream()
-            .map(cp -> cp.getCategory().getCategoryId())
-            .collect(Collectors.toList());
-
-        dto.setCategoryIds(categoryIds);
 
         return dto;
     }

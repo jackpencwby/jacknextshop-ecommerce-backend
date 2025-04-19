@@ -22,6 +22,6 @@ public class CustomOAuth2User extends CustomUserDetails implements OAuth2User {
 
     @Override
     public String getName() {
-        return getUser().getFname();
+        return getUser().getProvider()+getUser().getProviderId();
     }
 }

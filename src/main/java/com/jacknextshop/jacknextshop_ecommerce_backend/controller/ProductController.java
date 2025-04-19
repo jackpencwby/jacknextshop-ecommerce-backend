@@ -14,7 +14,6 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -26,40 +25,26 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-
     @GetMapping()
-    public ResponseEntity<APIPaginatedResponseDTO<ProductDto>> getPaginatedAllProduct(
+    public ResponseEntity<APIPaginatedResponseDTO<ProductDto>> getPaginatedProduct(
+        @RequestParam(required = false) Long categoryId,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) 
     {
-        Page<Product> paginateProducts = productService.getPaginatedAllProduct(page, size);
+        Page<Product> paginateProducts;
 
-        List<ProductDto> productDtos = paginateProducts.getContent().stream().map(p -> productService.toDto(p)).toList();
+        if(categoryId == null){
+            paginateProducts = productService.getPaginatedAllProduct(page, size);
+        }
+        else{
+            paginateProducts = productService.getPaginatedProductByCategoryId(categoryId, page, size);
+        }
 
-        APIPaginatedResponseDTO<ProductDto> response = new APIPaginatedResponseDTO<>();
-
-        response.setData(productDtos);
-        response.setTotalPages(paginateProducts.getTotalPages());
-        response.setTotalElements(paginateProducts.getTotalElements());
-        response.setPage(page);
-        response.setSize(size);
-
-        return ResponseEntity.ok(response);
-    }
-    
-
-    @GetMapping("/{categoryId}")
-    public ResponseEntity<APIPaginatedResponseDTO<ProductDto>> getPaginatedProductByCategoryId(
-        @PathVariable Long categoryId,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size
-    ) 
-    {
-        Page<Product> paginateProducts = productService.getPaginatedProductByCategoryId(categoryId, page, size);
-
-        List<ProductDto> productDtos = paginateProducts.getContent().stream().map(p -> productService.toDto(p)).toList();
-
+        List<ProductDto> productDtos = paginateProducts.getContent().stream()
+        .map(p -> productService.toDto(p))
+        .toList();
+        
         APIPaginatedResponseDTO<ProductDto> response = new APIPaginatedResponseDTO<>();
 
         response.setData(productDtos);

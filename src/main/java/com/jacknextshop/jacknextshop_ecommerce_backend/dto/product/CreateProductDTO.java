@@ -16,8 +16,7 @@ import lombok.Data;
 public class CreateProductDTO {
 
     @NotNull(message = "กรุณาใส่รหัสหมวดหมู่สินค้า")
-    @Size(min = 1, message = "ต้องมีรหัสหมวดหมู่สินค้าอย่างน้อย 1 รหัส")
-    private List<Long> categoriesId;
+    private Long categoryId;
 
     @NotBlank(message = "กรุณาใส่ชื่อสินค้า")
     private String name;

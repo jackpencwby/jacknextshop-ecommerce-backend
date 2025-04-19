@@ -16,7 +16,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User getUserByToken(OAuth2AuthenticationToken token){
+    public User getUserByToken(OAuth2AuthenticationToken token) {
         String provider = token.getAuthorizedClientRegistrationId();
         String providerId = "";
         var oAuth2User = token.getPrincipal();
@@ -27,25 +27,27 @@ public class UserService {
             providerId = oAuth2User.getAttribute("id");
         } else if ("github".equals(provider)) {
             Object idAttr = oAuth2User.getAttribute("id");
-        if (idAttr != null) {
-            providerId = idAttr.toString();
-        } else {
-            throw new IllegalArgumentException("GitHub ID is missing in OAuth2 attributes");
+            if (idAttr != null) {
+                providerId = idAttr.toString();
+            } else {
+                throw new IllegalArgumentException("GitHub ID is missing in OAuth2 attributes");
+            }
         }
-        }
-        User user = userRepository.findByProviderAndProviderId(provider, providerId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        return user;
 
+        User user = userRepository.findByProviderAndProviderId(provider, providerId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return user;
     }
 
-    public void checkAdmin(OAuth2AuthenticationToken token){
+    public void checkAdmin(OAuth2AuthenticationToken token) {
         User user = this.getUserByToken(token);
-        if(! user.getIsAdmin()){
+        if (!user.getIsAdmin()) {
             throw new UserIsNotAdminException("You do not have administrative privileges to perform this action.");
         }
     }
 
-    public UserResponseDTO toDto(User user){
+    public UserResponseDTO toDto(User user) {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setFname(user.getFname());
         dto.setLname(user.getLname());

@@ -19,10 +19,9 @@ public class CustomOAuth2User extends CustomUserDetails implements OAuth2User {
     public Map<String, Object> getAttributes() {
         return attributes;
     }
-
+ 
     @Override
     public String getName() {
-        System.out.println("\n\n"+getUser().getProvider()+getUser().getProviderId());
         return getUser().getProvider()+getUser().getProviderId();
     }
 }

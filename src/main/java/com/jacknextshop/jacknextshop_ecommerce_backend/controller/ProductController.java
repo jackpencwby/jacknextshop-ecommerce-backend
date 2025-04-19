@@ -9,11 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIPaginatedResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.ProductDto;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
-import com.jacknextshop.jacknextshop_ecommerce_backend.repository.ProductRepository;
-import com.jacknextshop.jacknextshop_ecommerce_backend.service.CategoryService;
-import com.jacknextshop.jacknextshop_ecommerce_backend.service.CloudinaryService;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
-import com.jacknextshop.jacknextshop_ecommerce_backend.service.UserService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,19 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ProductController {
 
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private CloudinaryService cloudinaryService;
-
-    @Autowired
     private ProductService productService;
 
-    @Autowired
-    private UserService userService;
 
     @GetMapping()
     public APIPaginatedResponseDTO<ProductDto> getPaginatedAllProduct(

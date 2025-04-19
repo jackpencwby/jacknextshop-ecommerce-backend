@@ -11,5 +11,4 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.entity.key.ReviewKey;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, ReviewKey>{
     Page<Review> findAllByProductProductIdAndIsDeleteFalse(Long productId, Pageable pageable);
-
 }

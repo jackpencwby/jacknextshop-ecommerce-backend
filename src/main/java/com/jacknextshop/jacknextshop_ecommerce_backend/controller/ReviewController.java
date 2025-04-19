@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIPaginatedResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.ReviewRequestDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.ReviewResponseDTO;
@@ -46,6 +48,15 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
+    @PutMapping("/{productId}")
+    public ResponseEntity<APIResponseDTO<?>> updateReview(
+        OAuth2AuthenticationToken token,
+        @PathVariable Long productId,
+        @Valid @RequestBody ReviewRequestDTO reviewRequestDTO
+    ){
+        return this.createReview(token, productId, reviewRequestDTO);
+    }
+
     @PostMapping("/{productId}")
     public ResponseEntity<APIResponseDTO<?>> createReview(
         OAuth2AuthenticationToken token,
@@ -64,6 +75,7 @@ public class ReviewController {
         review.setRating(reviewRequestDTO.getRating());
         review.setUser(user);
         review.setProduct(product);
+        review.setIsDelete(false);
         Review savedReview = reviewRepository.save(review);
 
         // Create Response
@@ -75,7 +87,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<APIResponseDTO<?>> getReview(
+    public ResponseEntity<?> getReview(
         OAuth2AuthenticationToken token,
         @PathVariable Long productId,
         @RequestParam(defaultValue = "false") boolean onlyMe,
@@ -92,17 +104,18 @@ public class ReviewController {
             key.setProductId(productId);
             key.setUserId(user.getUserId());
             Review review = reviewService.findById(key);
-            APIResponseDTO<ReviewResponseDTO> responseDTO = new APIResponseDTO<>();
-            responseDTO.setMessage("Success, only: " + user.getFname()+ " " + user.getLname());
-            responseDTO.setData(reviewService.toDto(review));
-            return ResponseEntity.ok().body(responseDTO);
+            return ResponseEntity.ok(reviewService.toDto(review));
         }
-        Page<Review> reviews = reviewService.findAllByProductProductId(productId, page, size);
-        List<ReviewResponseDTO> result = reviewService.toDtos(reviews.getContent());
-        APIResponseDTO<List<ReviewResponseDTO>> responseDTO = new APIResponseDTO<>();
-        responseDTO.setMessage("Success, Page: "+ page +" Size: "+ size);
-        responseDTO.setData(result);
-        return ResponseEntity.ok().body(responseDTO);
+        Page<Review> paginateReviews = reviewService.findAllByProductProductId(productId, page, size);
+        List<ReviewResponseDTO> responseDtos = paginateReviews.getContent().stream().map(r -> reviewService.toDto(r)).toList();
+        APIPaginatedResponseDTO<ReviewResponseDTO> response = new APIPaginatedResponseDTO<>();
+        response.setData(responseDtos);
+        response.setPage(page);
+        response.setSize(size);
+        response.setTotalPages(paginateReviews.getTotalPages());
+        response.setTotalElements(paginateReviews.getTotalElements());
+
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping("/{productId}")
@@ -114,25 +127,33 @@ public class ReviewController {
         User user = userService.getUserByToken(token);
         APIResponseDTO<ReviewResponseDTO> responseDTO = new APIResponseDTO<>();
         responseDTO.setMessage("Delete Success");
-        
-        if( ! user.getIsAdmin()){
+
+        if( ! user.getIsAdmin() || userId == null){
+            // Delete their own review.
             ReviewKey key = new ReviewKey();
             key.setProductId(productId);
             key.setUserId(user.getUserId());
             Review review = reviewService.findById(key);
+            if(review.getIsDelete()){
+                throw new ResourceNotFoundException("Review is already deleted");
+            }
             review.setIsDelete(true);
             reviewRepository.save(review);
             responseDTO.setData(reviewService.toDto(review));
             return ResponseEntity.ok().body(responseDTO);
         }
+        // Delete their user's review.
         userService.checkAdmin(token);
         ReviewKey key = new ReviewKey();
         key.setProductId(productId);
         key.setUserId(userId);
         Review review = reviewService.findById(key);
+        if(review.getIsDelete()){
+            throw new ResourceNotFoundException("Review is already deleted");
+        }
         review.setIsDelete(true);
         reviewRepository.save(review);
         responseDTO.setData(reviewService.toDto(review));
         return ResponseEntity.ok().body(responseDTO);
-    }
+        }
 }

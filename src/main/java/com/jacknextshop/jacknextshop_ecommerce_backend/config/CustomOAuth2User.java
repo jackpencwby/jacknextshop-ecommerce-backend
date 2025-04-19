@@ -22,7 +22,7 @@ public class CustomOAuth2User extends CustomUserDetails implements OAuth2User {
 
     @Override
     public String getName() {
-        System.out.println("\n\n"+getUser().getProvider()+getUser().getProviderId());
+        System.out.println("\n\nTest"+getUser().getProvider()+getUser().getProviderId());
         return getUser().getProvider()+getUser().getProviderId();
     }
 }

@@ -76,7 +76,7 @@ public class CategoryController {
     ){
         userService.checkAdmin(token);
         Category category = categoryService.findById(id);
-        if(category.isDeleted()){
+        if(category.getIsDeleted()){
             throw new ResourceNotFoundException("This category is already deleted.");
         }
         category.setName(createCategoryDTO.getName());
@@ -89,10 +89,10 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategory(OAuth2AuthenticationToken token, @PathVariable Long id){
         userService.checkAdmin(token);
         Category category = categoryService.findById(id);
-        if(category.isDeleted()){
+        if(category.getIsDeleted()){
             throw new ResourceNotFoundException("This category is already deleted.");
         }
-        category.setDeleted(true);
+        category.setIsDeleted(true);
         categoryRepository.save(category);
         var dto = categoryService.toDto(category);
         return ResponseEntity.ok().body(dto);
@@ -102,7 +102,7 @@ public class CategoryController {
     public ResponseEntity<?> getDetailCategory(@PathVariable Long id){
 
         Category category = categoryService.findById(id);
-        if(category.isDeleted()){
+        if(category.getIsDeleted()){
             throw new ResourceNotFoundException("This category is already deleted.");
         }
         var dto = categoryService.toDto(category);

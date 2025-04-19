@@ -114,6 +114,7 @@ public class ReviewController {
         User user = userService.getUserByToken(token);
         APIResponseDTO<ReviewResponseDTO> responseDTO = new APIResponseDTO<>();
         responseDTO.setMessage("Delete Success");
+        
         if( ! user.getIsAdmin()){
             ReviewKey key = new ReviewKey();
             key.setProductId(productId);

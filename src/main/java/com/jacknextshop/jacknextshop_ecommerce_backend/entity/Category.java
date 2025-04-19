@@ -1,6 +1,9 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,15 +24,12 @@ public class Category {
     @Column(name = "category_id")
     private Long categoryId;
 
-    // Relationship
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<CategoryProduct> categoryProducts;
-
-
-    // Fields
     @Column(name = "name")
     private String name;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+    private Boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products = new ArrayList<>();
 }

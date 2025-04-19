@@ -30,7 +30,7 @@ public class CategoryService {
         CategoryResponseDTO dto = new CategoryResponseDTO();
         dto.setName(category.getName());
         dto.setCategoryId(category.getCategoryId());
-        dto.setDelete(category.isDeleted());
+        dto.setDelete(category.getIsDeleted());
         return dto;
     }
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIPaginatedResponseDTO;
@@ -12,10 +13,8 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/api/product")
@@ -24,55 +23,37 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-
     @GetMapping()
-    public APIPaginatedResponseDTO<ProductDto> getPaginatedAllProduct(
+    public ResponseEntity<APIPaginatedResponseDTO<ProductDto>> getPaginatedProduct(
+        @RequestParam(required = false) Long categoryId,
         @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size
+        @RequestParam(defaultValue = "10") int size
     ) 
     {
-        Page<Product> paginateProducts = productService.getPaginatedAllProduct(page, size);
+        Page<Product> paginateProducts;
 
-        List<ProductDto> productDtos = paginateProducts.getContent().stream().map(p -> productService.toDto(p)).toList();
+        if(categoryId == null){
+            paginateProducts = productService.getPaginatedAllProduct(page, size);
+        }
+        else{
+            paginateProducts = productService.getPaginatedProductByCategoryId(categoryId, page, size);
+        }
 
-        APIPaginatedResponseDTO<ProductDto> dto = new APIPaginatedResponseDTO<>();
+        List<ProductDto> productDtos = paginateProducts.getContent().stream()
+        .map(p -> productService.toDto(p))
+        .toList();
+        
+        APIPaginatedResponseDTO<ProductDto> response = new APIPaginatedResponseDTO<>();
 
-        dto.setData(productDtos);
-        dto.setTotalPages(paginateProducts.getTotalPages());
-        dto.setTotalElements(paginateProducts.getTotalElements());
-        dto.setPage(page);
-        dto.setSize(size);
+        response.setData(productDtos);
+        response.setTotalPages(paginateProducts.getTotalPages());
+        response.setTotalElements(paginateProducts.getTotalElements());
+        response.setPage(page);
+        response.setSize(size);
 
-        return dto;
+        return ResponseEntity.ok(response);
     }
     
-
-    @GetMapping("/{categoryId}")
-    public Page<Product> getPaginatedProductByCategoryId(
-        @PathVariable Long categoryId,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size
-    ) 
-    {
-        return productService.getPaginatedProductByCategoryId(categoryId, page, size);
-    }
-    
-
-    // @GetMapping()
-    // public ResponseEntity<APIResponseDTO<?>> getProduct(){
-    //     List<Product> products = productRepository.findAll();
-    //     List<ProductResponseDTO> productDTOs = productService.toDtos(products);
-    //     // Filter Deleted products
-    //     List<ProductResponseDTO> filtered = productDTOs.stream()
-    //         .filter(dto -> ! dto.getIsDeleted())
-    //         .collect(Collectors.toList());
-
-    //     APIResponseDTO<List<ProductResponseDTO>> response = new APIResponseDTO<>();
-    //     response.setMessage("Success");
-    //     response.setData(filtered);
-    //     return ResponseEntity.ok().body(response);
-    // }
-
     // @PostMapping()
     // public ResponseEntity<APIResponseDTO<?>> createProduct(
     //     OAuth2AuthenticationToken token, 

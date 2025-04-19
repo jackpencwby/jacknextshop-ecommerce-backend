@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.jacknextshop.jacknextshop_ecommerce_backend.config.CustomOAuth2User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.UserRepository;
 
@@ -20,7 +21,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private UserRepository userRepository;
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public CustomOAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
         
         String provider = userRequest.getClientRegistration().getRegistrationId();
@@ -74,9 +75,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             newUser.setProvider(provider);
             newUser.setProviderId(providerId);
             newUser.setIsAdmin(false);
-            userRepository.save(newUser);
+            User savedUser = userRepository.save(newUser);
+            return new CustomOAuth2User(savedUser, oAuth2User.getAttributes());
         }
 
-        return oAuth2User;
+        return new CustomOAuth2User(user.get(), oAuth2User.getAttributes());
     }
 }

@@ -44,7 +44,7 @@ public class CategoryController {
     public ResponseEntity<?> getCategory(){
         List<Category> categories = categoryRepository.findAll();
         List<CategoryResponseDTO> dtos = categoryService.toDtos(categories);
-        // Filter deleted category
+        
         List<CategoryResponseDTO> filtered = dtos.stream()
             .filter(dto -> ! dto.isDelete())
             .collect(Collectors.toList());

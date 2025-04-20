@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIPaginatedResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.ReviewPaginationDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.ReviewRequestDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.ReviewResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
@@ -25,6 +25,7 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Review;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.key.ReviewKey;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.UnauthorizedException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserIsNotAdminException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.ReviewRepository;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
@@ -82,7 +83,7 @@ public class ReviewController {
         // Create Response
         ReviewResponseDTO dto = reviewService.toDto(savedReview);
         APIResponseDTO<ReviewResponseDTO> responseDTO = new APIResponseDTO<>();
-        responseDTO.setMessage("Success");
+        responseDTO.setMessage("Create/Update Success");
         responseDTO.setData(dto);
         return ResponseEntity.ok().body(responseDTO);
     }
@@ -99,7 +100,11 @@ public class ReviewController {
         if(product.getIsDeleted()){
             throw new ResourceNotFoundException("This Product is already deleted");
         }
+
         if(onlyMe){
+            if(token == null){
+                throw new UnauthorizedException("You must be logged before using ?onlyMe=true."); 
+            }
             User user = userService.getUserByToken(token);
             ReviewKey key = new ReviewKey();
             key.setProductId(productId);
@@ -109,9 +114,12 @@ public class ReviewController {
         }
         Page<Review> paginateReviews = reviewService.findAllByProductProductId(productId, page, size);
         List<ReviewResponseDTO> responseDtos = paginateReviews.getContent().stream().map(r -> reviewService.toDto(r)).toList();
-        APIPaginatedResponseDTO<ReviewResponseDTO> response = new APIPaginatedResponseDTO<>();
+        // Getting Average Rating
+        Double avgRating = reviewService.getRatingByProductProductId(productId);
+        ReviewPaginationDTO<ReviewResponseDTO> response = new ReviewPaginationDTO<>();
         response.setData(responseDtos);
         response.setPage(page);
+        response.setRating(avgRating);
         response.setSize(size);
         response.setTotalPages(paginateReviews.getTotalPages());
         response.setTotalElements(paginateReviews.getTotalElements());

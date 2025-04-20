@@ -5,16 +5,26 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIPaginatedResponseDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.CreateProductDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.ProductDto;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
+import com.jacknextshop.jacknextshop_ecommerce_backend.service.UserService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+
 
 @RestController
 @RequestMapping("/api/product")
@@ -22,6 +32,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping()
     public ResponseEntity<APIPaginatedResponseDTO<ProductDto>> getPaginatedProduct(
@@ -53,42 +66,43 @@ public class ProductController {
 
         return ResponseEntity.ok(response);
     }
-    
-    // @PostMapping()
-    // public ResponseEntity<APIResponseDTO<?>> createProduct(
-    //     OAuth2AuthenticationToken token, 
-    //     @Valid @ModelAttribute CreateProductDTO createProductDTO
-    //     ) {
-    //     userService.checkAdmin(token);
-    //     Product product = new Product();
-    //     product.setName(createProductDTO.getName());
-    //     product.setPrice(createProductDTO.getPrice());
-    //     product.setDescription(createProductDTO.getDescription());
-    //     product.setStock(createProductDTO.getStock());
-    //     try {
-    //         String imageUrl = cloudinaryService.uploadImage(createProductDTO.getImage());
-    //         product.setImage(imageUrl);
-    //     } catch (Exception e){
-    //         APIResponseDTO<?> response = new APIResponseDTO<>();
-    //         response.setMessage("Server Error");
-    //         response.setData(null);
-    //         return ResponseEntity.badRequest().body(response);
-    //     }
 
-    //     Product savedProduct = productRepository.save(product);
-    //     List<Category> categories = categoryService.findAllById(createProductDTO.getCategoriesId());
-    //     for (Category c: categories){
-    //         CategoryProductKey categoryProductKey = new CategoryProductKey(c.getCategoryId(), savedProduct.getProductId());
-    //         CategoryProduct categoryProduct = new CategoryProduct();
-    //         categoryProduct.setCategoryProductKey(categoryProductKey);
-    //         categoryProduct.setCategory(c);
-    //         categoryProduct.setProduct(savedProduct);
-    //         categoryProductRepository.save(categoryProduct);
-    //     }
-    //     ProductResponseDTO dto = productService.toDto(savedProduct);
-    //     APIResponseDTO<ProductResponseDTO> response = new APIResponseDTO<>();
-    //     response.setMessage("Create Product Success");
-    //     response.setData(dto);
-    //     return ResponseEntity.ok().body(response);
-    // }
+    @GetMapping("/{product_id}")
+    public ResponseEntity<APIResponseDTO<ProductDto>> getProductById(@PathVariable("product_id") Long productId){
+        Product product = productService.findById(productId);
+
+        ProductDto productDto = productService.toDto(product);
+
+        APIResponseDTO<ProductDto> response = new APIResponseDTO<>();
+        response.setMessage(null);
+        response.setData(productDto);
+
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping()
+    public ResponseEntity<APIResponseDTO<ProductDto>> createProduct(
+        OAuth2AuthenticationToken token,
+        @Valid @ModelAttribute CreateProductDTO createProductDTO
+    )
+    {
+        userService.checkAdmin(token);
+
+        Product product = productService.createProduct(
+            createProductDTO.getCategoryId(), 
+            createProductDTO.getName(), 
+            createProductDTO.getPrice(), 
+            createProductDTO.getDescription(), 
+            createProductDTO.getStock(),
+            createProductDTO.getImage()
+        );
+
+        ProductDto productDto = productService.toDto(product);
+
+        APIResponseDTO<ProductDto> response = new APIResponseDTO<>();
+        response.setMessage("Create product successfully.");
+        response.setData(productDto);
+
+        return ResponseEntity.ok(response);
+    }
 }

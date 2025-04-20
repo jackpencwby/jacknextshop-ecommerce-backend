@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.cloudinary.UploadImageException;
 
 @Service
 public class CloudinaryService {
@@ -16,8 +17,12 @@ public class CloudinaryService {
     @Autowired
     private Cloudinary cloudinary;
 
-    public String uploadImage(MultipartFile file) throws IOException {
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        return uploadResult.get("secure_url").toString();
+    public String uploadImage(MultipartFile file) {
+        try {
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            return uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            throw new UploadImageException(e.getMessage());
+        }
     }
 }

@@ -8,8 +8,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig {
-    @Value("${frontend.url}")
-        private String frontendUrl;
+    @Value("${frontend.url1}")
+        private String frontendUrl1;
+
+    @Value("${frontend.url2}")
+        private String frontendUrl2;
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -18,7 +21,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") 
-                        .allowedOrigins(frontendUrl)
+                        .allowedOrigins(frontendUrl1, frontendUrl2)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

@@ -1,7 +1,6 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.dto.product;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,7 +8,6 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data

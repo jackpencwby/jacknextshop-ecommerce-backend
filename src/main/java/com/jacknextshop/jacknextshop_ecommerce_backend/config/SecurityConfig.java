@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 .requestMatchers
                                 (HttpMethod.GET, 
                                 "/api/product",
+                                "/api/product/{product_id}",
                                 "/api/category",
                                 "api/review/{productId}"
                                 ).permitAll()

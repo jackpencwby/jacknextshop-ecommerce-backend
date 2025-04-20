@@ -1,0 +1,10 @@
+{
+    "product": {
+      "product_id": 1,
+      "name": "iphone"  
+    },
+    "user": {
+        "user_id": 1
+    }
+}
+

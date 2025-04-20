@@ -25,6 +25,7 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Review;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.key.ReviewKey;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserIsNotAdminException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.ReviewRepository;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ReviewService;
@@ -130,6 +131,10 @@ public class ReviewController {
 
         if( ! user.getIsAdmin() || userId == null){
             // Delete their own review.
+            // If user isn't admin but request to delete a review by sending userId.
+            if( ! user.getIsAdmin() && userId != null){
+                throw new UserIsNotAdminException("Sending ?userId=" + userId + " can only be processed by an admin user.");
+            }
             ReviewKey key = new ReviewKey();
             key.setProductId(productId);
             key.setUserId(user.getUserId());

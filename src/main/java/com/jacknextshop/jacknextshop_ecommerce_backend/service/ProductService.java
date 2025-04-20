@@ -42,7 +42,6 @@ public class ProductService {
         dto.setDescription(product.getDescription());
         dto.setStock(product.getStock());
         dto.setImage(product.getImage());
-        dto.setIsDeleted(product.getIsDeleted());
 
         return dto;
     }

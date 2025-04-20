@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,10 +20,10 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -68,6 +67,19 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{product_id}")
+    public ResponseEntity<APIResponseDTO<ProductDto>> getProductById(@PathVariable("product_id") Long productId){
+        Product product = productService.findById(productId);
+
+        ProductDto productDto = productService.toDto(product);
+
+        APIResponseDTO<ProductDto> response = new APIResponseDTO<>();
+        response.setMessage(null);
+        response.setData(productDto);
+
+        return ResponseEntity.ok(response);
+    }
+    
     @PostMapping()
     public ResponseEntity<APIResponseDTO<ProductDto>> createProduct(
         OAuth2AuthenticationToken token,

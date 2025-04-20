@@ -74,7 +74,7 @@ public class ProductController {
         ProductDto productDto = productService.toDto(product);
 
         APIResponseDTO<ProductDto> response = new APIResponseDTO<>();
-        response.setMessage(null);
+        response.setMessage("Success");
         response.setData(productDto);
 
         return ResponseEntity.ok(response);

@@ -36,6 +36,10 @@ public class ReviewService {
         return reviewRepository.findAllByProductProductIdAndIsDeleteFalse(productId, pageable);
     }
 
+    public Double getRatingByProductProductId(Long productId){
+        return reviewRepository.findAverageRatingByProductId(productId);
+    }
+
     public Review findById(ReviewKey key){
         return reviewRepository.findById(key).orElseThrow(() -> new ResourceNotFoundException("Review Not found"));
     }

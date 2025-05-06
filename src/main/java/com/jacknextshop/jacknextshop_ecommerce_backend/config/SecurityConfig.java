@@ -21,8 +21,11 @@ public class SecurityConfig {
         private final CustomOAuth2UserService customOAuth2UserService;
         private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-        @Value("${frontend.url}")
-        private String frontendUrl;
+        @Value("${frontend.url1}")
+        private String frontendUrl1;
+
+        @Value("${frontend.url2}")
+        private String frontendUrl2;
 
         public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
                                 RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
@@ -52,7 +55,7 @@ public class SecurityConfig {
                                 .loginPage("/login")
                                 .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
-                                .defaultSuccessUrl(frontendUrl, true)
+                                .defaultSuccessUrl(frontendUrl1, true)
                         )
                         .logout(logout -> logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))

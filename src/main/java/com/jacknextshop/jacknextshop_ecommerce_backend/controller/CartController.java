@@ -47,6 +47,16 @@ public class CartController {
         ResponseCartDTO dto = cartService.toDtos(carts);
         return ResponseEntity.ok().body(dto);
     }
+    
+    @GetMapping("/{productId}")
+    public ResponseEntity<?> getDetailCart(OAuth2AuthenticationToken token, @PathVariable Long productId) {
+        User user = userService.getUserByToken(token);
+        Cart cart = cartService.findById(user.getUserId(), productId);
+        List<Cart> carts = new ArrayList<>();
+        carts.add(cart);
+        ResponseCartDTO dto = cartService.toDtos(carts);
+        return ResponseEntity.ok().body(dto);
+    }
 
     @PostMapping("/{productId}/{amount}")
     public ResponseEntity<?> addProductToCart(OAuth2AuthenticationToken token, 
@@ -58,6 +68,8 @@ public class CartController {
         if(product.getStock() < amount) {
             return ResponseEntity.badRequest()
         .body("Sorry, the requested amount is more than what's available in stock. Only " + product.getStock() + " items are currently available.");
+        } else if(amount == 0) {
+            return this.deleteProductToCart(token, productId);
         }
         Cart cart = new Cart();
         cart.setAmount(amount);
@@ -85,19 +97,15 @@ public class CartController {
     ) {
         User user = userService.getUserByToken(token);
         Cart cart = cartService.findById(user.getUserId(), productId);
-        List<Cart> temp = new ArrayList<>();
-        temp.add(cart);
-        ResponseCartDTO dto = cartService.toDtos(temp);
         cartRepository.delete(cart);
-        return ResponseEntity.ok().body(dto);
+        return ResponseEntity.ok().body(this.getCart(token).getBody());
     }
 
     @DeleteMapping()
     public ResponseEntity<?> deleteAllProductToCart(OAuth2AuthenticationToken token) {
         User user = userService.getUserByToken(token);
         List<Cart> carts = cartService.findAllByUserId(user.getUserId());
-        ResponseCartDTO dto = cartService.toDtos(carts);
         cartRepository.deleteAll(carts);
-        return ResponseEntity.ok().body(dto);
+        return ResponseEntity.ok().body(this.getCart(token).getBody());
     }
 }

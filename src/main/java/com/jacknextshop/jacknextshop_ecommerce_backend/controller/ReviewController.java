@@ -110,6 +110,9 @@ public class ReviewController {
             key.setProductId(productId);
             key.setUserId(user.getUserId());
             Review review = reviewService.findById(key);
+            if(review.getIsDelete()) {
+                throw new ResourceNotFoundException("Your Review is already deleted");
+            }
             return ResponseEntity.ok(reviewService.toDto(review));
         }
         Page<Review> paginateReviews = reviewService.findAllByProductProductId(productId, page, size);

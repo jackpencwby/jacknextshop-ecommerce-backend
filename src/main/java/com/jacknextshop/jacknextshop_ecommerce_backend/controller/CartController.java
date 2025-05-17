@@ -65,7 +65,7 @@ public class CartController {
     ) {
         User user = userService.getUserByToken(token);
         Product product = productService.findById(productId);
-        if(product.getStock() < amount) {
+        if(product.getStock() < amount || amount < 0) {
             return ResponseEntity.badRequest()
         .body("Sorry, the requested amount is more than what's available in stock. Only " + product.getStock() + " items are currently available.");
         } else if(amount == 0) {

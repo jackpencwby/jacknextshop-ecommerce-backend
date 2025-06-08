@@ -33,7 +33,6 @@ build/
 .vscode/
 
 .env
-.env.development
 
 application-dev.properties
 

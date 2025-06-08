@@ -4,10 +4,12 @@ services:
       context: .
       dockerfile: Dockerfile.development
     container_name: springboot
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     volumes:
       - .:/app
     ports:
-      - "{BACKEND_PORT}:${BACKEND_PORT}"          
+      - "${BACKEND_PORT}:${BACKEND_PORT}"          
     
   db:
     image: postgres

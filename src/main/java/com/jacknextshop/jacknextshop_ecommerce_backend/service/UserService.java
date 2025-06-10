@@ -5,7 +5,9 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Service;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.user.UserResponseDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserIsNotAdminException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.UserRepository;
@@ -15,6 +17,10 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    public User findById(Long id){
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not found"));
+    }
 
     public User getUserByToken(OAuth2AuthenticationToken token) {
         String provider = token.getAuthorizedClientRegistrationId();

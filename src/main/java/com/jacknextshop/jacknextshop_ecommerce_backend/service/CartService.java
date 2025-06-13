@@ -1,5 +1,6 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,14 @@ public class CartService {
         CartListDTO userCart = new CartListDTO();
         userCart.setUserId(userId);
         userCart.setCarts(toDtos(carts));
+
+        List<CartDTO> cartDtos = toDtos(carts);
+
+        BigDecimal totalPrice = cartDtos.stream()
+                                    .map(dto -> dto.getPrice().multiply(BigDecimal.valueOf(dto.getAmount())))
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        userCart.setTotalPrice(totalPrice);
 
         return userCart;
     }

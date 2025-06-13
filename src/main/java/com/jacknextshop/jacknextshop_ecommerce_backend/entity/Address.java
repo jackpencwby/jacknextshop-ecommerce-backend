@@ -49,7 +49,7 @@ public class Address {
     private Boolean isDefault; 
     
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     // Relationship
     @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)

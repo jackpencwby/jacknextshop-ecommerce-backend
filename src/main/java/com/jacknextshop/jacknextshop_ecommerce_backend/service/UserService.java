@@ -5,7 +5,6 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Service;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.user.UserResponseDTO;
-import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserIsNotAdminException;

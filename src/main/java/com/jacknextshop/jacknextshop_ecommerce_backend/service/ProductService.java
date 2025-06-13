@@ -29,8 +29,7 @@ public class ProductService {
     private CloudinaryService cloudinaryService;
 
     public Product findById(Long id){
-        Product result = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
-        return result;
+        return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
     }
 
     public ProductDto toDto(Product product){

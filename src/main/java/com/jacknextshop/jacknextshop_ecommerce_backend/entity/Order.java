@@ -1,5 +1,6 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,16 +31,21 @@ public class Order {
 
     // Fields
     @Column(name = "total_price")
-    private double totalPrice;
+    private BigDecimal totalPrice;
 
+    public enum OrderStatus {
+        PENDING,
+        PAID,
+    };
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status = OrderStatus.PENDING;
 
     @Column(name = "order_date")
-    private LocalDate orderDate;
+    private LocalDate orderDate = LocalDate.now();
 
     @Column(name = "shipping_date")
-    private LocalDate shippingDate;
+    private LocalDate shippingDate = null;
 
     // Relationship
     @ManyToOne

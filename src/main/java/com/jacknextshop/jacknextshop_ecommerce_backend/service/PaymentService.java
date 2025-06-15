@@ -40,6 +40,9 @@ public class PaymentService {
 	@Autowired
 	private OrderService orderService;
 
+	@Autowired
+	private ProductService productService;
+
 	public StripeResponse createCheckoutSession(Long orderId) {
 		Stripe.apiKey = secretKey;
 
@@ -107,6 +110,7 @@ public class PaymentService {
 			}
 			
 			orderService.markOrderAsPaid(Long.parseLong(orderId));
+			productService.updateStockAndSoldForSuccessOrder(Long.parseLong(orderId));
 		}
 	}
 }

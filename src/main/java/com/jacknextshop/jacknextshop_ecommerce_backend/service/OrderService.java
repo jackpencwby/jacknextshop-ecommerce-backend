@@ -10,6 +10,7 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.dto.order.OrderDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Address;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Cart;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Order;
+import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Order.OrderStatus;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.CartRepository;
@@ -74,6 +75,12 @@ public class OrderService {
         Order completedOrder = findById(savedOrder.getOrderId());
 
         return completedOrder;
+    }
+
+    public void markOrderAsPaid(Long orderId) {
+        Order order = findById(orderId);
+        order.setStatus(OrderStatus.PAID); 
+        orderRepository.save(order);
     }
 
     public OrderDTO toDto(Order order) {

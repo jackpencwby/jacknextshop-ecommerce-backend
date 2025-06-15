@@ -30,7 +30,7 @@ public class SecurityConfig {
                 return http
                         .csrf(csrf -> csrf.disable())
                         .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/login", "/api/hello").permitAll()
+                                .requestMatchers("/login", "/api/hello", "/api/payment/webhook").permitAll()
                                 .requestMatchers
                                 (HttpMethod.GET, 
                                 "/api/product",

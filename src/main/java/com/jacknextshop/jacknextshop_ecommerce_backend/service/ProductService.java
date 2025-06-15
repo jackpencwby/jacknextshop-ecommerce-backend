@@ -22,54 +22,37 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired 
+    @Autowired
     private CategoryService categoryService;
 
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    public Product findById(Long id){
+    public Product findById(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
-    }
-
-    public ProductDto toDto(Product product){
-        ProductDto dto = new ProductDto();
-
-        dto.setProductId(product.getProductId());
-        dto.setName(product.getName());
-        dto.setPrice(product.getPrice());
-        dto.setDescription(product.getDescription());
-        dto.setStock(product.getStock());
-        dto.setImage(product.getImage());
-
-        return dto;
-    }
-
-    public List<ProductDto> toDtos(List<Product> products){
-        List<ProductDto> dtos = products.stream().map(p -> toDto(p)).toList();
-
-        return dtos;
     }
 
     public Page<Product> getPaginatedAllProduct(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAllByIsDeletedFalse(pageable);
-    } 
+    }
 
     public Page<Product> getPaginatedProductByCategoryId(Long categoryId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findByCategoryCategoryIdAndIsDeletedFalse(categoryId, pageable);
     }
 
+    public List<Product> getBestSellerProduct() {
+        return productRepository.findTop5ByOrderBySoldDesc();
+    }
+
     public Product createProduct(
-        Long categoryId, 
-        String name, 
-        BigDecimal price, 
-        String description,
-        int stock,
-        MultipartFile image
-    )
-    {
+            Long categoryId,
+            String name,
+            BigDecimal price,
+            String description,
+            int stock,
+            MultipartFile image) {
         Category category = categoryService.findById(categoryId);
 
         Product product = new Product();
@@ -81,5 +64,25 @@ public class ProductService {
         product.setImage(cloudinaryService.uploadImage(image));
 
         return productRepository.save(product);
+    }
+
+    public ProductDto toDto(Product product) {
+        ProductDto dto = new ProductDto();
+
+        dto.setProductId(product.getProductId());
+        dto.setName(product.getName());
+        dto.setPrice(product.getPrice());
+        dto.setDescription(product.getDescription());
+        dto.setStock(product.getStock());
+        dto.setSold(product.getSold());
+        dto.setImage(product.getImage());
+
+        return dto;
+    }
+
+    public List<ProductDto> toDtos(List<Product> products) {
+        List<ProductDto> dtos = products.stream().map(p -> toDto(p)).toList();
+
+        return dtos;
     }
 }

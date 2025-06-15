@@ -40,10 +40,13 @@ public class Product {
 
     @Column(name = "stock")
     private int stock;
+
+    @Column(name = "sold")
+    private int sold = 0;
     
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
-
+    
     // Relationship
     @ManyToOne
     @JoinColumn(name = "category_id")

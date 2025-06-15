@@ -12,4 +12,5 @@ public class ProductDto {
     private String description;
     private String image;
     private int stock;
+    private int sold;
 }

@@ -79,6 +79,19 @@ public class ProductController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/best-seller")
+    public ResponseEntity<APIResponseDTO<List<ProductDto>>> getBestSellerProduct() {
+        List<Product> products = productService.getBestSellerProduct();
+
+        List<ProductDto> productDtos = productService.toDtos(products);
+
+        APIResponseDTO<List<ProductDto>> response = new APIResponseDTO<>();
+        response.setMessage("Success");
+        response.setData(productDtos);
+
+        return ResponseEntity.ok(response);
+    }
     
     @PostMapping()
     public ResponseEntity<APIResponseDTO<ProductDto>> createProduct(

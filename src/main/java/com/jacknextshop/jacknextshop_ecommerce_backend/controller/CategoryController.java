@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -91,7 +92,23 @@ public class CategoryController {
         APIResponseDTO<CategoryDTO> response = new APIResponseDTO<>();
         response.setData(categoryDTO);
         response.setMessage("Update category successfully");
-        
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCategory(
+            @AuthenticationPrincipal OAuth2User principal,
+            @PathVariable UUID id) {
+
+        Category category = categoryService.deleteCategory(id, principal);
+
+        CategoryDTO categoryDTO = categoryService.toDto(category);
+
+        APIResponseDTO<CategoryDTO> response = new APIResponseDTO<>();
+        response.setData(categoryDTO);
+        response.setMessage("Delete category successfully");
+
         return ResponseEntity.ok(response);
     }
 }

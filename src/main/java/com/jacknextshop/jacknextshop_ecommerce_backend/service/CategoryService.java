@@ -11,6 +11,7 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.dto.category.CategoryDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Category;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserForBiddenException;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserNotAuthenticatedException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.CategoryRepository;
 
 @Service
@@ -50,6 +51,18 @@ public class CategoryService {
         Category category = findByCategoryId(categoryId);
 
         category.setName(name);
+
+        return categoryRepository.save(category);
+    }
+
+    public Category deleteCategory(UUID categoryId, OAuth2User principal) {
+        if (!userService.isAdmin(principal)) {
+            throw new UserForBiddenException("Only admin can delete category.");
+        }
+
+        Category category = findByCategoryId(categoryId);
+
+        category.setIsDeleted(true);
 
         return categoryRepository.save(category);
     }

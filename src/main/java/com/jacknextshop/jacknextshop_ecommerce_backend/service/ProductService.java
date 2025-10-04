@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +36,17 @@ public class ProductService {
     public Product findByProductId(UUID productId) {
         return productRepository.findByProductIdAndIsDeletedFalse(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product Not found"));
+    }
+
+    public Page<Product> getPaginatedAllProduct(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return productRepository.findAllByIsDeletedFalse(pageable);
+    }
+
+    public Page<Product> getPaginatedProductByCategoryId(UUID categoryId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByCategoryCategoryIdAndIsDeletedFalse(categoryId, pageable);
     }
 
     public Product createProduct(

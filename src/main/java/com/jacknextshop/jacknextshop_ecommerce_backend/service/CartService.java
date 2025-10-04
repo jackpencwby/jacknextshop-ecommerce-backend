@@ -15,6 +15,7 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.ProductDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.CartItem;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.CartItemRepository;
 
 @Service
@@ -66,6 +67,19 @@ public class CartService {
         cartItem.setAmount(amount);
 
         return cartItemRepository.save(cartItem);
+    }
+
+    public void deleteCartItem(OAuth2User principal, UUID productId) {
+        User user = userService.getCurrentUser(principal);
+
+        Optional<CartItem> cartItemInDB = cartItemRepository.findByUserUserIdAndProductProductId(user.getUserId(),
+                productId);
+
+        if (cartItemInDB.isPresent()) {
+            cartItemRepository.deleteByUserUserIdAndProductProductId(user.getUserId(), productId);
+        } else {
+            throw new ResourceNotFoundException("Cart item not found.");
+        }
     }
 
     public CartItemDTO toDto(CartItem cartItem) {

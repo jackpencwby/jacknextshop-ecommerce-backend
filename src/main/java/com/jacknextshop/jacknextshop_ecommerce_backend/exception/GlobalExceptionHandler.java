@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.cloudinary.FileUploadException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserForBiddenException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserNotAuthenticatedException;
 
@@ -73,5 +74,16 @@ public class GlobalExceptionHandler {
         body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<Map<String, Object>> handleFileUploadException(FileUploadException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now().toString());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "File Upload Failed");
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

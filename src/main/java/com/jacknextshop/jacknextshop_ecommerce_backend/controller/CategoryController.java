@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.category.CategoryDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.category.CreateCategoryDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.category.UpdateCategoryDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Category;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.CategoryService;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
@@ -71,6 +73,25 @@ public class CategoryController {
         response.setMessage("Create category successfully.");
         response.setData(categoryDTO);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping()
+    public ResponseEntity<?> updateCategory(
+            @AuthenticationPrincipal OAuth2User principal,
+            @Valid @ModelAttribute UpdateCategoryDTO updateCategoryDTO) {
+
+        Category category = categoryService.updateCategory(
+                updateCategoryDTO.getCategoryId(),
+                updateCategoryDTO.getName(),
+                principal);
+
+        CategoryDTO categoryDTO = categoryService.toDto(category);
+
+        APIResponseDTO<CategoryDTO> response = new APIResponseDTO<>();
+        response.setData(categoryDTO);
+        response.setMessage("Update category successfully");
+        
         return ResponseEntity.ok(response);
     }
 }

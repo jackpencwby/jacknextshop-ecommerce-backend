@@ -42,6 +42,18 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    public Category updateCategory(UUID categoryId, String name, OAuth2User principal) {
+        if (!userService.isAdmin(principal)) {
+            throw new UserForBiddenException("Only admin can update category.");
+        }
+
+        Category category = findByCategoryId(categoryId);
+
+        category.setName(name);
+
+        return categoryRepository.save(category);
+    }
+
     public CategoryDTO toDto(Category category) {
         CategoryDTO dto = new CategoryDTO();
 

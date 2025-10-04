@@ -79,6 +79,44 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public Product updateProduct(
+            UUID productId,
+            String name,
+            BigDecimal price,
+            String description,
+            Integer stock,
+            Integer sold,
+            MultipartFile image,
+            OAuth2User principal) {
+
+        if (!userService.isAdmin(principal)) {
+            throw new UserForBiddenException("Only admin can update product.");
+        }
+
+        Product product = findByProductId(productId);
+
+        if (name != null && !name.isBlank()) {
+            product.setName(name);
+        }
+        if (price != null) {
+            product.setPrice(price);
+        }
+        if (description != null && !description.isBlank()) {
+            product.setDescription(description);
+        }
+        if (stock != null) {
+            product.setStock(stock);
+        }
+        if (sold != null) {
+            product.setSold(sold);
+        }
+        if (image != null) {
+            product.setImage(cloudinaryService.uploadFile(image));
+        }
+
+        return productRepository.save(product);
+    }
+
     public ProductDTO toDto(Product product) {
         ProductDTO dto = new ProductDTO();
 

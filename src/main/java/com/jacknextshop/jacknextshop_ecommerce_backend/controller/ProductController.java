@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIPaginatedResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.category.CategoryDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.category.UpdateCategoryDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.CreateProductDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.ProductDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.UpdateProductDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Category;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
 
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/product")
@@ -105,6 +110,30 @@ public class ProductController {
 
         APIResponseDTO<ProductDTO> response = new APIResponseDTO<>();
         response.setMessage("Create product successfully.");
+        response.setData(productDTO);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping()
+    public ResponseEntity<?> updateProduct(
+            @AuthenticationPrincipal OAuth2User principal,
+            @Valid @ModelAttribute UpdateProductDTO updateProductDTO) {
+
+        Product product = productService.updateProduct(
+                updateProductDTO.getProductId(),
+                updateProductDTO.getName(),
+                updateProductDTO.getPrice(),
+                updateProductDTO.getDescription(),
+                updateProductDTO.getStock(),
+                updateProductDTO.getSold(),
+                updateProductDTO.getImage(),
+                principal);
+
+        ProductDTO productDTO = productService.toDto(product);
+
+        APIResponseDTO<ProductDTO> response = new APIResponseDTO<>();
+        response.setMessage("Update product successfully.");
         response.setData(productDTO);
 
         return ResponseEntity.ok(response);

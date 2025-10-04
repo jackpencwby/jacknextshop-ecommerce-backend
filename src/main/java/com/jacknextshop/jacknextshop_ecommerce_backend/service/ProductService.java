@@ -49,6 +49,10 @@ public class ProductService {
         return productRepository.findByCategoryCategoryIdAndIsDeletedFalse(categoryId, pageable);
     }
 
+    public List<Product> getBestSellerProduct() {
+        return productRepository.findTop5ByOrderBySoldDesc();
+    }
+
     public Product createProduct(
             UUID categoryId,
             String name,

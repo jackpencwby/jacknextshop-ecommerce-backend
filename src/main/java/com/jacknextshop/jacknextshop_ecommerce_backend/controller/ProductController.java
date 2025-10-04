@@ -74,6 +74,19 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/best-seller")
+    public ResponseEntity<?> getBestSellerProduct() {
+        List<Product> products = productService.getBestSellerProduct();
+
+        List<ProductDTO> productDTOs = productService.toDtos(products);
+
+        APIResponseDTO<List<ProductDTO>> response = new APIResponseDTO<>();
+        response.setMessage(null);
+        response.setData(productDTOs);
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping()
     public ResponseEntity<?> createProduct(
             @AuthenticationPrincipal OAuth2User principal,

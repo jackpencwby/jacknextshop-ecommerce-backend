@@ -22,7 +22,7 @@ public class OrderItem {
     private UUID orderItemId;
 
     @Column(name = "amount", nullable = false)
-    private int amount;
+    private Integer amount;
 
     @ManyToOne
     @JoinColumn(name = "order_id")

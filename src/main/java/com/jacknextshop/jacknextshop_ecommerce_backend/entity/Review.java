@@ -22,7 +22,7 @@ public class Review {
     private UUID reviewId;
 
     @Column(name = "rating")
-    private int rating;
+    private Integer rating;
 
     @Column(name = "comment")
     private String comment;

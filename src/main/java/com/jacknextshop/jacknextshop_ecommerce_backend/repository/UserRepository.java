@@ -11,4 +11,5 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByProviderAndProviderId(String provider, String providerId);
+    Optional<User> findByUserId(UUID userId);
 }

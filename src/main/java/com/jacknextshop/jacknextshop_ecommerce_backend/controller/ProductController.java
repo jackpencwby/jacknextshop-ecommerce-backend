@@ -23,6 +23,7 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.service.ProductService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -135,6 +136,22 @@ public class ProductController {
         APIResponseDTO<ProductDTO> response = new APIResponseDTO<>();
         response.setMessage("Update product successfully.");
         response.setData(productDTO);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(
+            @AuthenticationPrincipal OAuth2User principal,
+            @PathVariable UUID id) {
+
+        Product product = productService.deleteProduct(id, principal);
+
+        ProductDTO productDTO = productService.toDto(product);
+
+        APIResponseDTO<ProductDTO> response = new APIResponseDTO<>();
+        response.setData(productDTO);
+        response.setMessage("Delete product successfully");
 
         return ResponseEntity.ok(response);
     }

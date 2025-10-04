@@ -117,6 +117,18 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public Product deleteProduct(UUID productId, OAuth2User principal) {
+        if (!userService.isAdmin(principal)) {
+            throw new UserForBiddenException("Only admin can delete product.");
+        }
+
+        Product product = findByProductId(productId);
+
+        product.setIsDeleted(true);
+
+        return productRepository.save(product);
+    }
+
     public ProductDTO toDto(Product product) {
         ProductDTO dto = new ProductDTO();
 

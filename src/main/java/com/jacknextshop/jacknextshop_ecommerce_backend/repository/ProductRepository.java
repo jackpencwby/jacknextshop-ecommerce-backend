@@ -1,5 +1,6 @@
 package com.jacknextshop.jacknextshop_ecommerce_backend.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +10,5 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, UUID> {
+    Optional<Product> findByProductIdAndIsDeletedFalse(UUID productId);
 }

@@ -22,7 +22,7 @@ public class CartItem {
     private UUID CartItemId;
 
     @Column(name = "amount", nullable = false)
-    private int amount;
+    private Integer amount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

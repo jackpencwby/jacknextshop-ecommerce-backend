@@ -35,10 +35,10 @@ public class Product {
     private String image;
 
     @Column(name = "stock", nullable = false)
-    private int stock;
+    private Integer stock;
 
     @Column(name = "sold")
-    private int sold = 0;
+    private Integer sold = 0;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;

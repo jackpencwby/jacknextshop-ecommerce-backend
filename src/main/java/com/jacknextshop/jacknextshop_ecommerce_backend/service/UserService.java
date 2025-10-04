@@ -27,7 +27,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Role getRole(OAuth2User principal) {
+    public User getCurrentUser(OAuth2User principal) {
         if (principal == null) {
             throw new UserNotAuthenticatedException("User not authenticated.");
         }
@@ -36,6 +36,12 @@ public class UserService {
 
         User user = userRepository.findByProviderAndProviderId("google", providerId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+
+        return user;
+    }
+
+    public Role getRole(OAuth2User principal) {
+        User user = getCurrentUser(principal);
 
         return user.getRole();
     }

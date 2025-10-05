@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.APIResponseDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.CreateReviewDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.ReviewDTO;
+import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.UpdateReviewDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Review;
 import com.jacknextshop.jacknextshop_ecommerce_backend.service.ReviewService;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
@@ -58,6 +60,26 @@ public class ReviewController {
 
         APIResponseDTO<ReviewDTO> response = new APIResponseDTO<>();
         response.setMessage("Create review successfully.");
+        response.setData(reviewDTO);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping()
+    public ResponseEntity<?> updateReview(
+            @AuthenticationPrincipal OAuth2User principal,
+            @Valid @ModelAttribute UpdateReviewDTO updateReviewDTO) {
+
+        Review review = reviewService.updateReview(
+                updateReviewDTO.getReviewId(),
+                updateReviewDTO.getRating(),
+                updateReviewDTO.getComment(),
+                principal);
+
+        ReviewDTO reviewDTO = reviewService.toDto(review);
+
+        APIResponseDTO<ReviewDTO> response = new APIResponseDTO<>();
+        response.setMessage("Update review successfully.");
         response.setData(reviewDTO);
 
         return ResponseEntity.ok(response);

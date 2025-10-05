@@ -12,6 +12,8 @@ import com.jacknextshop.jacknextshop_ecommerce_backend.dto.review.ReviewDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Review;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserForBiddenException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.ReviewRepository;
 
 @Service
@@ -40,6 +42,31 @@ public class ReviewService {
         review.setProduct(product);
         review.setRating(rating);
         review.setComment(comment);
+
+        return reviewRepository.save(review);
+    }
+
+    public Review updateReview(
+            UUID reviewId,
+            Integer rating,
+            String comment,
+            OAuth2User principal) {
+
+        User user = userService.getCurrentUser(principal);
+
+        Review review = reviewRepository.findByReviewId(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found."));
+
+        if (!review.getUser().getUserId().equals(user.getUserId())) {
+            throw new UserForBiddenException("Access denied to this review.");
+        }
+
+        if (rating != null) {
+            review.setRating(rating);
+        }
+        if (comment != null && !comment.isBlank()) {
+            review.setComment(comment);
+        }
 
         return reviewRepository.save(review);
     }

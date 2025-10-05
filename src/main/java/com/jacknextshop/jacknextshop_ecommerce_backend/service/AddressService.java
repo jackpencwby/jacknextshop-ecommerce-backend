@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.address.AddressDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Address;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.User;
+import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.AddressRepository;
 
 @Service
@@ -19,6 +20,11 @@ public class AddressService {
 
     @Autowired
     private UserService userService;
+
+    public Address findByAddressId(UUID addressId) {
+        return addressRepository.findByAddressId(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found."));
+    }
 
     public List<Address> getAddress(OAuth2User principal) {
         User user = userService.getCurrentUser(principal);

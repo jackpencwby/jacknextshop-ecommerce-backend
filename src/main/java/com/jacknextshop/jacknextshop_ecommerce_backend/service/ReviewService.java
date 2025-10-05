@@ -71,6 +71,21 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
+    public Review deleteReview(UUID reviewId, OAuth2User principal) {
+        User user = userService.getCurrentUser(principal);
+
+        Review review = reviewRepository.findByReviewId(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found."));
+
+        if (!review.getUser().getUserId().equals(user.getUserId())) {
+            throw new UserForBiddenException("Access denied to this review.");
+        }
+
+        review.setIsDelete(true);
+
+        return reviewRepository.save(review);
+    }
+
     public ReviewDTO toDto(Review review) {
         ReviewDTO dto = new ReviewDTO();
 

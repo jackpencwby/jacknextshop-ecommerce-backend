@@ -14,15 +14,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jacknextshop.jacknextshop_ecommerce_backend.dto.product.ProductDTO;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Category;
+import com.jacknextshop.jacknextshop_ecommerce_backend.entity.OrderItem;
 import com.jacknextshop.jacknextshop_ecommerce_backend.entity.Product;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.ResourceNotFoundException;
 import com.jacknextshop.jacknextshop_ecommerce_backend.exception.user.UserForBiddenException;
+import com.jacknextshop.jacknextshop_ecommerce_backend.repository.OrderItemRepository;
 import com.jacknextshop.jacknextshop_ecommerce_backend.repository.ProductRepository;
 
 @Service
 public class ProductService {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
     @Autowired
     private CategoryService categoryService;
@@ -127,6 +132,24 @@ public class ProductService {
         product.setIsDeleted(true);
 
         return productRepository.save(product);
+    }
+
+    public void updateStockAndSoldForSuccessOrder(UUID orderId) {
+        List<OrderItem> orderItems = orderItemRepository.findByOrderOrderId(orderId);
+
+        for (OrderItem orderItem : orderItems) {
+            Product product = orderItem.getProduct();
+
+            int oldStock = product.getStock();
+            int oldSold = product.getSold();
+
+            int amount = orderItem.getAmount();
+
+            product.setSold(oldSold + amount);
+            product.setStock(oldStock - amount);
+
+            productRepository.save(product);
+        }
     }
 
     public ProductDTO toDto(Product product) {

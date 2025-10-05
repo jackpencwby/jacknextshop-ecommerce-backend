@@ -91,6 +91,12 @@ public class OrderService {
         return completedOrder;
     }
 
+    public void markOrderAsPaid(UUID orderId) {
+        Order order = findByOrderId(orderId);
+        order.setStatus(OrderStatus.PAID); 
+        orderRepository.save(order);
+    }
+
     public OrderDTO toDto(Order order) {
         OrderDTO dto = new OrderDTO();
 

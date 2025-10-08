@@ -62,5 +62,5 @@ jobs:
             -e STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
             -e STRIPE_SUCCESS_URL="${{ secrets.STRIPE_SUCCESS_URL }}" \
             -e STRIPE_CANCEL_URL="${{ secrets.STRIPE_CANCEL_URL }}" \
-            -p 127.0.0.1:8080:8080 \
+            -p 8080:8080 \
             ${{ secrets.DOCKER_USERNAME }}/jacknextshop-ecommerce-backend:latest

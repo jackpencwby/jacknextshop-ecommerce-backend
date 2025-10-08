@@ -51,8 +51,8 @@ jobs:
             --network backend-network \
             -e SPRING_PROFILES_ACTIVE=prod \
             -e DB_PROD_URL="${{ secrets.DB_PROD_URL }}" \
-            -e DB_PROD_USERNAME="${{ secrets.DB_PROD_USER }}" \
-            -e DB_PROD_PASSWORD="${{ secrets.DB_PROD_PASS }}" \
+            -e DB_PROD_USERNAME="${{ secrets.DB_PROD_USERNAME }}" \
+            -e DB_PROD_PASSWORD="${{ secrets.DB_PROD_PASSWORD }}" \
             -e GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
             -e GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
             -e CLOUDINARY_CLOUD_NAME="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \

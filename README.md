@@ -52,12 +52,3 @@ Below is the Entity Relationship Diagram (ERD) representing the database structu
 
 ---
 
-## ⚙️ CI/CD & Deployment
-
-- **GitHub Actions** automates testing, building, and image pushing.  
-- **Docker** is used to containerize the application:
-  - Build image from Dockerfile  
-  - Deploy to server
-
----
-
